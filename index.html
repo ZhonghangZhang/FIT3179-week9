@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@6.2.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@6.1.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@7.0.2"></script>
+</head>
+<body>
+  <div id="vis"/>
+  <script>
+    const spec = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 900,
+  "height": 600,
+  "projection": {
+    "type": "albers",
+    "parallels": [-18, -36],
+    "rotate": [-136, 0, 0],
+    "center": [0, -25]
+  },
+  "title": {
+    "text": "Top Source Country of International Students by State, Australia (Jan–Jul 2025)",
+    "subtitle": "Size = number of students; Color = top source country",
+    "anchor": "start"
+  },
+  "layer": [
+    {
+      "data": {
+        "url": "https://raw.githubusercontent.com/rowanhogan/australian-states/master/states.geojson"
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "#f4ecec",
+        "stroke": "#9aa4ad",
+        "strokeWidth": 0.7
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {"state": "NSW", "lon": 151.2093, "lat": -33.8688},
+          {"state": "VIC", "lon": 144.9631, "lat": -37.8136},
+          {"state": "QLD", "lon": 153.0251, "lat": -27.4698},
+          {"state": "SA", "lon": 138.6007, "lat": -34.9285},
+          {"state": "WA", "lon": 115.8575, "lat": -31.9505},
+          {"state": "TAS", "lon": 147.3272, "lat": -42.8821},
+          {"state": "NT", "lon": 130.8456, "lat": -12.4634},
+          {"state": "ACT", "lon": 149.13, "lat": -35.2809}
+        ]
+      },
+      "transform": [
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "values": [
+                {"state": "NSW", "country": "China", "count": 82425},
+                {"state": "VIC", "country": "India", "count": 57794},
+                {"state": "QLD", "country": "China", "count": 20224},
+                {"state": "SA", "country": "India", "count": 12093},
+                {"state": "WA", "country": "India", "count": 11577},
+                {"state": "TAS", "country": "Nepal", "count": 1227},
+                {"state": "NT", "country": "Nepal", "count": 1257},
+                {"state": "ACT", "country": "China", "count": 7497}
+              ]
+            },
+            "key": "state",
+            "fields": ["country", "count"]
+          }
+        }
+      ],
+      "mark": {
+        "type": "circle",
+        "opacity": 0.9,
+        "stroke": "#333",
+        "strokeWidth": 0.3
+      },
+      "encoding": {
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "size": {
+          "field": "count",
+          "type": "quantitative",
+          "scale": {"range": [60, 1800]},
+          "legend": {"title": "# Students"}
+        },
+        "color": {
+          "field": "country",
+          "type": "nominal",
+          "legend": {"title": "Top source country"},
+          "scale": {
+            "domain": ["China", "India", "Nepal"],
+            "range": ["#1f77b4", "#ff7f0e", "#2ca02c"]
+          }
+        },
+        "tooltip": [
+          {"field": "state", "title": "State/Territory"},
+          {"field": "country", "title": "Top country"},
+          {"field": "count", "title": "Students", "format": ","}
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {"state": "NSW", "lon": 151.2093, "lat": -33.8688},
+          {"state": "VIC", "lon": 144.9631, "lat": -37.8136},
+          {"state": "QLD", "lon": 153.0251, "lat": -27.4698},
+          {"state": "SA", "lon": 138.6007, "lat": -34.9285},
+          {"state": "WA", "lon": 115.8575, "lat": -31.9505},
+          {"state": "TAS", "lon": 147.3272, "lat": -42.8821},
+          {"state": "NT", "lon": 130.8456, "lat": -12.4634},
+          {"state": "ACT", "lon": 149.13, "lat": -35.2809}
+        ]
+      },
+      "transform": [
+        {
+          "lookup": "state",
+          "from": {
+            "data": {
+              "values": [
+                {"state": "NSW", "country": "China", "count": 82425},
+                {"state": "VIC", "country": "India", "count": 57794},
+                {"state": "QLD", "country": "China", "count": 20224},
+                {"state": "SA", "country": "India", "count": 12093},
+                {"state": "WA", "country": "India", "count": 11577},
+                {"state": "TAS", "country": "Nepal", "count": 1227},
+                {"state": "NT", "country": "Nepal", "count": 1257},
+                {"state": "ACT", "country": "China", "count": 7497}
+              ]
+            },
+            "key": "state",
+            "fields": ["country", "count"]
+          }
+        },
+        {
+          "calculate": "datum.country + ' — ' + format(datum.count, ',')",
+          "as": "label"
+        }
+      ],
+      "mark": {
+        "type": "text",
+        "dy": -12,
+        "fontSize": 14,
+        "fontWeight": "bold",
+        "fill": "#1f2a37"
+      },
+      "encoding": {
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "text": {"field": "label"}
+      }
+    }
+  ],
+  "config": {"view": {"stroke": null}}
+};
+    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>
